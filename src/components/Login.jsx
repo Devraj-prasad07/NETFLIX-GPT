@@ -71,10 +71,10 @@ const Login = () => {
   };
 
   return (
-    <div className="relative min-h-screen bg-black text-white">
+    <div className="min-h-screen bg-black text-white m-0 p-0 box-border">
       <Header />
       {/* Background Image */}
-      <div className="absolute top-0 left-0 h-full w-full">
+      <div className="fixed top-0 left-0 h-full w-full">
         <img
           src="https://assets.nflxext.com/ffe/siteui/vlv3/151f3e1e-b2c9-4626-afcd-6b39d0b2694f/web/IN-en-20241028-TRIFECTA-perspective_bce9a321-39cb-4cce-8ba6-02dab4c72e53_small.jpg"
           alt="Netflix Background"
@@ -84,7 +84,7 @@ const Login = () => {
       {/* Form */}
       <form
         onSubmit={(e) => e.preventDefault()}
-        className="bg-black bg-opacity-85 text-white w-full sm:w-11/12 md:max-w-md mx-auto p-6 sm:p-8 mt-20 rounded-xl shadow-lg relative z-10"
+        className="bg-black bg-opacity-85 text-white w-full sm:w-11/12 md:max-w-md mx-auto top p-6 sm:p-8 mt-5 rounded-xl shadow-lg relative z-10v top-[-15px]"
       >
         <h1 className="font-bold py-3 text-3xl text-center">
           {isSignInForm ? "Sign In" : "Sign Up"}
