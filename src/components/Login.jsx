@@ -1,5 +1,10 @@
 import { useState } from "react";
 import Header from "./header";
+import { auth } from "../FireBase/Firebase.jsx";
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+} from "firebase/auth";
 import {
   confirmPasswordCheck,
   emailValidationCheck,
@@ -59,14 +64,74 @@ const Login = () => {
 
     setFormErrors(errors);
 
-    // Check if there are no errors
+    // To Check if there are no errors
     return Object.values(errors).every((err) => !err);
   };
 
   const handleButtonClick = () => {
     if (handleValidation()) {
-      // Handle form submission logic here
-      console.log("Form submitted successfully:", formData);
+      if (!isSignInForm) {
+        // Firebase Sign-Up
+        createUserWithEmailAndPassword(auth, formData.email, formData.password)
+          .then((userCredential) => {
+            // Successfully signed up
+            const user = userCredential.user;
+            console.log("User signed up successfully:", user);
+            alert("Sign-Up successful! Please sign in.");
+          })
+          .catch((error) => {
+            // Handle Firebase sign-up error
+            const errorCode = error.code;
+            const errorMessage = error.message;
+  
+            // Map Firebase error to specific field errors
+            const errors = { ...formErrors };
+  
+            if (errorCode === "auth/email-already-in-use") {
+              errors.email = "Email is already registered.";
+            } else if (errorCode === "auth/weak-password") {
+              errors.password = "Password should be at least 6 characters.";
+            } else {
+              errors.general = errorMessage; // General error for other issues
+            }
+  
+            setFormErrors(errors);
+          });
+      } else {
+        // Firebase Sign-In
+        signInWithEmailAndPassword(auth, formData.email, formData.password)
+          .then((userCredential) => {
+            // Successfully signed in
+            const user = userCredential.user;
+            console.log("User signed in successfully:", user);
+            alert("Sign-In successful!");
+          })
+          .catch((error) => {
+            console.log("Error Code:", error.code);
+            console.log("Error Message:", error.message);
+
+            // Handle Firebase sign-in error
+            const errorCode = error.code;
+            const errorMessage = error.message;
+
+            // Map Firebase error to specific field errors
+            const errors = { ...formErrors };
+
+            if (errorCode === "auth/user-not-found") {
+              errors.email = "No account found with this email.";
+            } else if (errorCode === "auth/wrong-password") {
+              errors.password = "Incorrect password. Please try again.";
+            } else if (errorCode === "auth/invalid-email") {
+              errors.email = "Invalid email format.";
+            } else if (errorCode === "auth/too-many-requests") {
+              errors.general = "Too many failed attempts. Please try again later.";
+            } else {
+              errors.general = errorMessage; // General error for any other issues
+            }
+
+            setFormErrors(errors); // Set form errors after catching Firebase error
+          });
+      }
     }
   };
 
